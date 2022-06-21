@@ -65,10 +65,12 @@ services:
       - "traefik.http.middlewares.redirect-to-https.redirectscheme.scheme=https"
       - "traefik.http.routers.apios2display.rule=Host(`${COMPOSE_DOMAIN}`)"
       - "traefik.http.routers.apios2display.entrypoints=websecure"
+      - "traefik.http.routers.apios2display.tls.certresolver=myresolver"
       # Redirect root / request to /${COMPOSE_ADMIN_CLIENT_PATH}
       - "traefik.http.routers.apios2display.middlewares=redirect-to-admin"
       - "traefik.http.middlewares.redirect-to-admin.redirectregex.regex=^https:\\/\\/([^\\/]+)\\/?$$"
       - "traefik.http.middlewares.redirect-to-admin.redirectregex.replacement=https://$$1${COMPOSE_ADMIN_CLIENT_PATH}"
+
       # - "traefik.http.routers.apios2display.middlewares=apios2display"
       # - "traefik.http.middlewares.apios2display.ipwhitelist.sourcerange=212.10.60.163, 10.225.0.0/16"
       # - "traefik.http.routers.${COMPOSE_PROJECT_NAME}.middlewares=ITKBasicAuth@file"
@@ -96,6 +98,7 @@ services:
       - "traefik.http.middlewares.redirect-to-https.redirectscheme.scheme=https"
       - "traefik.http.routers.adminos2display.rule=Host(`${COMPOSE_DOMAIN}`) && PathPrefix(`${COMPOSE_ADMIN_CLIENT_PATH}`)"
       - "traefik.http.routers.adminos2display.entrypoints=websecure"
+      - "traefik.http.routers.adminos2display.tls.certresolver=myresolver"
       # - "traefik.http.routers.adminos2display.middlewares=apios2display"
       # - "traefik.http.routers.${COMPOSE_PROJECT_NAME}.middlewares=ITKBasicAuth@file"
 
@@ -124,6 +127,7 @@ services:
       - "traefik.http.middlewares.redirect-to-https.redirectscheme.scheme=https"
       - "traefik.http.routers.clientos2display.rule=Host(`${COMPOSE_DOMAIN}`) && PathPrefix(`${COMPOSE_SCREEN_CLIENT_PATH}`)"
       - "traefik.http.routers.clientos2display.entrypoints=websecure"
+      - "traefik.http.routers.clientos2display.tls.certresolver=myresolver"
       # - "traefik.http.routers.clientos2display.middlewares=apios2display"
       # - "traefik.http.routers.${COMPOSE_PROJECT_NAME}.middlewares=ITKBasicAuth@file"
 
@@ -134,3 +138,17 @@ services:
       - app
     ports:
       - '6379'
+
+  mariadb:
+    image: mariadb:10.5
+    networks:
+      - app
+    ports:
+      - 3306:3306
+    volumes:
+      - ./data/mariadb:/var/lib/mysql
+    environment:
+      - MYSQL_PASSWORD=db
+      - MYSQL_USER=db
+      - MYSQL_DATABASE=db
+      - MYSQL_ROOT_PASSWORD=root

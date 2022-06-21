@@ -1,2 +1,8 @@
 .env.local
 .env.docker.local
+
+# mariadb datadir
+data
+
+# JWT keys
+jwt
